@@ -4,20 +4,27 @@ import { Navigation, Thumbs, Autoplay } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/navigation'
 
-// const glassLink = document.querySelector('.product-images__glass');
+import { Fancybox } from '@fancyapps/ui';
+import '@fancyapps/ui/dist/fancybox/fancybox.css';
 
-// function updateGlassLink(swiper) {
-//   if (!glassLink) return;
+const glassLink = document.querySelector('.product-images__glass');
 
-//   const activeSlide = swiper.slides[swiper.activeIndex]
-//   const activeImg = activeSlide?.querySelector('img')
-//   const imgSrc = activeImg?.getAttribute('src')
+function getActiveSlideImgSrc(swiper) {
+  const activeSlide = swiper.slides[swiper.activeIndex]
+  const activeImg = activeSlide?.querySelector('img')
 
-//   if (!imgSrc) return
+  return activeImg?.getAttribute('src') || ''
+}
 
-//   glassLink.href = imgSrc
-//   console.log(glassLink.href)
-// }
+function updateGlassLink(swiper) {
+  if (!glassLink) return
+
+  const imgSrc = getActiveSlideImgSrc(swiper)
+
+  if (!imgSrc) return
+
+  glassLink.href = imgSrc
+}
   
 
 const swiperProductSliderThumb = new Swiper('.product-images__thumbs', {
@@ -29,7 +36,7 @@ const swiperProductSliderThumb = new Swiper('.product-images__thumbs', {
   slideToClickedSlide: true,
 });
 
-const swiperProductSlider = new Swiper('.product-images__main', {
+const swiperProductSlider = new Swiper('.product-images__main--swiper', {
   modules: [Navigation, Thumbs], 
   slidesPerView: 1,
   spaceBetween: 20,
@@ -42,10 +49,34 @@ const swiperProductSlider = new Swiper('.product-images__main', {
   },
   on: {
     init(swiper) {
-      updateGlassLink(swiper)
+      updateGlassLink(swiper);
     },
     slideChange(swiper) {
-      updateGlassLink(swiper)
+      updateGlassLink(swiper);
     },
   },
+})
+
+glassLink?.addEventListener('click', function (e) {
+  e.preventDefault()
+
+  const slides = [...swiperProductSlider.slides]
+
+  const items = slides.map((slide) => {
+    const img = slide.querySelector('img')
+    const src = img?.getAttribute('src')
+
+    return {
+      src,
+      type: 'image',
+    }
+  }).filter(item => item.src)
+
+  Fancybox.show(items, {
+    startIndex: swiperProductSlider.activeIndex,
+  })
+})
+
+document.addEventListener('DOMContentLoaded', function() {
+    Fancybox.bind('[data-fancybox]', {});
 })
