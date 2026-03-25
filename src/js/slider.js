@@ -85,6 +85,20 @@ const swiperOtherProduct = new Swiper('.other-product__swiper', {
     nextEl: '.other-product__next',
     prevEl: '.other-product__prev',
   },
+  breakpoints: {
+    0: {
+      slidesPerView: 1.3,
+    },
+    640: {
+      slidesPerView: 2.3,
+    },
+    991: {
+      slidesPerView: 3.3,
+    },
+    1440: {
+      slidesPerView: 4,
+    }
+  }
 })
 
 document.addEventListener('DOMContentLoaded', function() {
