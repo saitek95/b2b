@@ -77,6 +77,16 @@ glassLink?.addEventListener('click', function (e) {
   })
 })
 
+const swiperOtherProduct = new Swiper('.other-product__swiper', {
+  modules: [Navigation], 
+  slidesPerView: 4,
+  spaceBetween: 20,
+  navigation: {
+    nextEl: '.other-product__next',
+    prevEl: '.other-product__prev',
+  },
+})
+
 document.addEventListener('DOMContentLoaded', function() {
     Fancybox.bind('[data-fancybox]', {});
 })

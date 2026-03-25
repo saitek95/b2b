@@ -7,15 +7,39 @@ import fs from 'fs'
 function htmlPartials() {
   return {
     name: 'html-partials',
-    transformIndexHtml(html) {
-      const header = fs.readFileSync(resolve(__dirname, 'src/partials/header.html'), 'utf-8')
-      const footer = fs.readFileSync(resolve(__dirname, 'src/partials/footer.html'), 'utf-8')
+    enforce: 'pre',
+    transformIndexHtml: {
+      order: 'pre',
+      handler(html) {
+        const header = fs.readFileSync(
+          resolve(__dirname, 'src/partials/header.html'),
+          'utf-8'
+        )
+        const footer = fs.readFileSync(
+          resolve(__dirname, 'src/partials/footer.html'),
+          'utf-8'
+        )
 
-      return html
-        .replace(/<!--\s*@header\s*-->/g, header)
-        .replace(/<!--\s*@footer\s*-->/g, footer)
+        return html
+          .replace(/<!--\s*@header\s*-->/g, header)
+          .replace(/<!--\s*@footer\s*-->/g, footer)
+      },
     },
   }
+}
+
+function getHtmlInputs() {
+  const rootDir = __dirname
+
+  const htmlFiles = fs
+    .readdirSync(rootDir)
+    .filter((file) => file.endsWith('.html'))
+
+  return htmlFiles.reduce((inputs, file) => {
+    const name = file.replace(/\.html$/, '')
+    inputs[name] = resolve(rootDir, file)
+    return inputs
+  }, {})
 }
 
 export default defineConfig({
@@ -29,9 +53,7 @@ export default defineConfig({
   ],
   build: {
     rollupOptions: {
-      input: {
-        main: resolve(__dirname, 'index.html'),
-      },
+      input: getHtmlInputs(),
     },
   },
 })
